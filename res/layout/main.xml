@@ -4,9 +4,35 @@
     android:layout_height="fill_parent"
     android:orientation="vertical" >
 
-    <TextView
-        android:layout_width="fill_parent"
+    <Button
+        android:id="@+id/button1"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/hello" />
+        android:text="sendQuery" android:onClick="StartQuery"/>
+
+    <Button
+        android:id="@+id/button2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Login appengine	" android:onClick="LoginAppEngine"/>
+
+    <TextView
+        android:id="@+id/photoUrl"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="No photo"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+
+    <Button
+        android:id="@+id/button3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="sendPhoto" android:onClick="sendPhoto"/>
+
+    <Button
+        android:id="@+id/button4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="getPhoto" android:onClick="getPhoto"/>
 
 </LinearLayout>

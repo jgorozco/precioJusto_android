@@ -12,14 +12,15 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
+import com.dreasyLib.comm.Comm;
+import com.dreasyLib.comm.Comm.OnCommEvent;
 import com.google.gson.Gson;
-import com.jvk.dreasyLibrary.comm.Comm;
-import com.jvk.dreasyLibrary.comm.Comm.OnCommEvent;
 import com.jvk.preciojusto.frwk.LocalError;
 import com.jvk.preciojusto.frwk.TimeStamp;
 
@@ -90,18 +91,18 @@ public class Preciojusto extends Activity implements OnCommEvent {
 				Hashtable hashParams=new Hashtable();
 				hashParams.put(Comm.PARAM_AUTH_TOKEN, Token);
 				Comm.AUTH_GAE((String) getText(R.string.url_server), hashParams, new OnCommEvent() {
-					@Override
+					
 					public void OnComplete(Object response) {
 						Log.d(TAG,"recibida cooki store");
 						cookieStore=(CookieStore) response;
 						Log.d(TAG,cookieStore.toString());
 						sendQuery();
 					}
-					@Override
+					
 					public void OnMessage(String string) {}
-					@Override
+					
 					public void OnProcess(int percent, String data) {}
-					@Override
+					
 					public void OnError(Error error) {
 						Log.e(TAG, "Error getting cookie:"+error.getMessage());
 					}
@@ -143,26 +144,26 @@ public class Preciojusto extends Activity implements OnCommEvent {
 
 	}
 
-	@Override
+	
 	public void OnMessage(String string) {
 		Log.d(TAG,"on msg:"+string);
 	}
 
 
 
-	@Override
+	
 	public void OnProcess(int percent, String data) {
 		Log.d(TAG,"OnProcess:"+String.valueOf(percent)+"% dt:"+data);
 
 	}
 
-	@Override
+	
 	public void OnError(Error error) {
 		Log.d(TAG,"OnError:"+error.getMessage());
 
 	}
 
-	@Override
+	
 	public void OnComplete(Object response) {
 		Log.d(TAG,"on msg:"+response);
 		Gson gson=new Gson();
@@ -177,6 +178,7 @@ public class Preciojusto extends Activity implements OnCommEvent {
 		}
 
 	}
+
 
 
 

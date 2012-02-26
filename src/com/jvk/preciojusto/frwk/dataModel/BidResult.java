@@ -1,4 +1,4 @@
-package com.jvk.preciojusto.frwk;
+package com.jvk.preciojusto.frwk.dataModel;
 
 public class BidResult {
 	public String userBidder;

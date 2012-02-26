@@ -1,4 +1,4 @@
-package com.jvk.preciojusto.frwk;
+package com.jvk.preciojusto.frwk.dataModel;
 
 import android.util.Log;
 

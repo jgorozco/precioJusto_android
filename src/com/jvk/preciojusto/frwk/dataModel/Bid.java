@@ -7,6 +7,7 @@ public class Bid {
     public String urlData;
     public String description;
     public float price;
+    public String id;
     
     public Bid() {
 	

@@ -4,7 +4,6 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Hashtable;
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.http.client.CookieStore;
@@ -21,12 +20,14 @@ import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.dreasyLib.comm.Comm;
 import com.dreasyLib.comm.Comm.OnCommEvent;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.jvk.preciojusto.frwk.CommManager;
+import com.jvk.preciojusto.frwk.Frwk;
 import com.jvk.preciojusto.frwk.dataModel.Bid;
 import com.jvk.preciojusto.frwk.dataModel.LocalError;
 import com.jvk.preciojusto.frwk.dataModel.TimeStamp;
@@ -36,7 +37,6 @@ public class Preciojusto extends Activity implements OnCommEvent {
 	/** Called when the activity is first created. */
 	public static final String TAG="precioJusto";
 	public String Token="";
-	public CookieStore cookieStore=null;
 	public String photoUrl="";
 	public TextView photoTextView;
 	public String userNick;
@@ -45,59 +45,65 @@ public class Preciojusto extends Activity implements OnCommEvent {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
 		Log.d(TAG, getString(R.string.url_server));
-		photoTextView=(TextView) findViewById(R.id.photoUrl);
+		Frwk.getInstance().initDataBaseManager(getApplicationContext());
 	}
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) { 
 
-	        if (resultCode == RESULT_OK) {
+		if (resultCode == RESULT_OK) {
 
-	                if (requestCode == 1) {
+			if (requestCode == 1) {
 
-	                        // currImageURI is the global variable I'm using to hold the content:// URI of the image
-	                       Uri  currImageURI = data.getData();
-	                        String [] proj={MediaStore.Images.Media.DATA};
-	                        Cursor cursor = managedQuery( currImageURI,
-	                                        proj, // Which columns to return
-	                                        null,       // WHERE clause; which rows to return (all rows)
-	                                        null,       // WHERE clause selection arguments (none)
-	                                        null); // Order-by clause (ascending by name)
-	                        int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
-	                        cursor.moveToFirst();
-	                        photoTextView.setText(cursor.getString(column_index));
-	                        photoUrl=cursor.getString(column_index);
-	                }
-	        }
+				// currImageURI is the global variable I'm using to hold the content:// URI of the image
+				Uri  currImageURI = data.getData();
+				String [] proj={MediaStore.Images.Media.DATA};
+				Cursor cursor = managedQuery( currImageURI,
+						proj, // Which columns to return
+						null,       // WHERE clause; which rows to return (all rows)
+						null,       // WHERE clause selection arguments (none)
+						null); // Order-by clause (ascending by name)
+				int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+				cursor.moveToFirst();
+				photoTextView.setText(cursor.getString(column_index));
+				photoUrl=cursor.getString(column_index);
+
+			}
+		}
 	}
 
 	public void getPhoto(View target)
 	{
+			Intent intent = new Intent(Preciojusto.this, BidPicker.class);                 
+			startActivity(intent);
+	
+		/*
 		Intent intent = new Intent();
 		intent.setType("image/*");
 		intent.setAction(Intent.ACTION_GET_CONTENT);
 		startActivityForResult(Intent.createChooser(intent, "Select Picture"),1);
+		 */
 	}
 
-	
+
 	public void getBids()
 	{
 		OnCommEvent commEvent=new OnCommEvent() {
-			
+
 			public void OnProcess(int percent, String data) {
 				Log.d(TAG, "commEvent :OnProcess:"+data+"  p:"+String.valueOf(percent) );
-				
+
 			}
-			
+
 			public void OnMessage(String string) {
 				Log.d(TAG, "commEvent :OnProcess:"+string );
-				
+
 			}
-			
+
 			public void OnError(Error error) {
 				Log.d(TAG, "commEvent :OnError:"+error.getMessage() );
-				
+
 			}
-			
+
 			public void OnComplete(Object response) {
 				Log.d(TAG, "commEvent :OnComplete:"+(String)response);
 				Gson gson=new Gson();
@@ -108,29 +114,29 @@ public class Preciojusto extends Activity implements OnCommEvent {
 					Log.d(TAG,"--->"+list.get(i).description);
 			}
 		};
-		CommManager.getBids(null,null,null, commEvent);
+		CommManager.getBids(null,null, commEvent);
 	}
-	
-	
+
+
 	public void getBids2()
 	{
 		OnCommEvent commEvent=new OnCommEvent() {
-			
+
 			public void OnProcess(int percent, String data) {
 				Log.d(TAG, "commEvent :OnProcess:"+data+"  p:"+String.valueOf(percent) );
-				
+
 			}
-			
+
 			public void OnMessage(String string) {
 				Log.d(TAG, "commEvent :OnProcess:"+string );
-				
+
 			}
-			
+
 			public void OnError(Error error) {
 				Log.d(TAG, "commEvent :OnError:"+error.getMessage() );
-				
+
 			}
-			
+
 			public void OnComplete(Object response) {
 				Log.d(TAG, "commEvent :OnComplete:"+(String)response);
 				Gson gson=new Gson();
@@ -141,32 +147,32 @@ public class Preciojusto extends Activity implements OnCommEvent {
 					Log.d(TAG,"--->"+list.get(i).description);
 			}
 		};
-		if (cookieStore!=null)
-			CommManager.getBids(userNick,cookieStore,"newBids", commEvent);
+		if (Frwk.getInstance().cookieStore!=null)
+			CommManager.getBids(userNick,"newBids", commEvent);
 		else
 			Log.d(TAG,"primero haz el login!");
-			
+
 	}
-	
-	
-	
+
+
+
 	public void sendPhotoToServer(String photo)
 	{
 		OnCommEvent myCommEvent=new OnCommEvent() {
-			
+
 			public void OnProcess(int percent, String data) {
 				Log.d(TAG, "upload:OnProcess:"+data+"  p:"+String.valueOf(percent) );
-				
+
 			}
-			
+
 			public void OnMessage(String string) {
 				Log.d(TAG, "upload:OnMessage:"+string );				
 			}
-			
+
 			public void OnError(Error error) {
 				Log.d(TAG, "upload:OnError:"+error.getMessage() );				
 			}
-			
+
 			public void OnComplete(Object response) {
 				Log.d(TAG, "upload:OnComplete:"+(String)response );	
 				Gson gson=new Gson();
@@ -177,10 +183,10 @@ public class Preciojusto extends Activity implements OnCommEvent {
 			}
 		};
 		CommManager.UploadPhoto(photo, CommManager.PhotoServers.IMGURL, myCommEvent);
-		
-		
+
+
 	}
-	
+
 	public void createAndSendBidToServer(String StringUrl)
 	{
 		final Bid newBid=new Bid();
@@ -190,6 +196,7 @@ public class Preciojusto extends Activity implements OnCommEvent {
 		newBid.timeStamp=Calendar.getInstance().getTimeInMillis();
 		newBid.urlData="http://carrefour.es";
 		newBid.userPropietary=userNick;
+		
 		final OnCommEvent sendBidcommEvent=new OnCommEvent() {
 			public void OnProcess(int percent, String data) {
 				Log.d(TAG,"OnProcess:"+data);
@@ -204,52 +211,56 @@ public class Preciojusto extends Activity implements OnCommEvent {
 				Log.d(TAG,"OnComplete:"+(String)response);
 			}
 		};
-		if (cookieStore==null)
+		if (Frwk.getInstance().cookieStore==null)
 		{
 			Hashtable hashParams=new Hashtable();
 			hashParams.put(Comm.PARAM_AUTH_TOKEN, Token);
 			Comm.AUTH_GAE((String) getText(R.string.url_server), hashParams, new OnCommEvent() {
-				
+
 				public void OnComplete(Object response) {
-					Log.d(TAG,"recibida cooki store");
-					cookieStore=(CookieStore) response;
-					Log.d(TAG,cookieStore.toString());
-					
-					CommManager.sendPhotoData(newBid,cookieStore, sendBidcommEvent);
+					Log.d(TAG,"recibida cooki store::"+userNick);
+					Frwk.getInstance().cookieStore=(CookieStore) response;
+					Frwk.getInstance().userId=userNick;
+					Log.d(TAG,Frwk.getInstance().toString());
+
+					CommManager.sendPhotoData(newBid, sendBidcommEvent);
 				}
-				
+
 				public void OnMessage(String string) {}
-				
+
 				public void OnProcess(int percent, String data) {}
-				
+
 				public void OnError(Error error) {
 					Log.e(TAG, "Error getting cookie:"+error.getMessage());
 				}
 			});
 		}else
 		{
-			CommManager.sendPhotoData(newBid,cookieStore, sendBidcommEvent);
+			CommManager.sendPhotoData(newBid, sendBidcommEvent);
 		}
-		
-		
+
+
 	}
-	
+
 
 	public void sendPhoto(View target)
 	{
-		if (!photoUrl.equals(""))
+		Intent intent = new Intent(Preciojusto.this, BidDraftList.class);                 
+		startActivity(intent);
+
+		/*	if (!photoUrl.equals(""))
 		{
 			sendPhotoToServer(photoUrl);
-		
+
 		}else{
 			Log.d(TAG, "No photo selected");
-		}
+		}*/
 	}
-	
+
 	public void StartQuery(View target) {
 		getBids2();
-		
-		
+
+
 		/*String urlCompleta;
 		if (!Token.equals(""))
 		{
@@ -260,18 +271,18 @@ public class Preciojusto extends Activity implements OnCommEvent {
 				Hashtable hashParams=new Hashtable();
 				hashParams.put(Comm.PARAM_AUTH_TOKEN, Token);
 				Comm.AUTH_GAE((String) getText(R.string.url_server), hashParams, new OnCommEvent() {
-					
+
 					public void OnComplete(Object response) {
 						Log.d(TAG,"recibida cooki store");
 						cookieStore=(CookieStore) response;
 						Log.d(TAG,cookieStore.toString());
 						sendQuery();
 					}
-					
+
 					public void OnMessage(String string) {}
-					
+
 					public void OnProcess(int percent, String data) {}
-					
+
 					public void OnError(Error error) {
 						Log.e(TAG, "Error getting cookie:"+error.getMessage());
 					}
@@ -289,9 +300,9 @@ public class Preciojusto extends Activity implements OnCommEvent {
 
 	private void sendQuery() {
 		Hashtable hash=new Hashtable();
-		hash.put(Comm.PARAM_AUTH_COOKIE, cookieStore);
+		hash.put(Comm.PARAM_AUTH_COOKIE, Frwk.getInstance().cookieStore);
 		Comm.GET((String)getString(R.string.url_server)+"/getBids?testall", hash, this);
-		
+
 	}
 
 	public void	LoginAppEngine(View target) {
@@ -301,6 +312,7 @@ public class Preciojusto extends Activity implements OnCommEvent {
 		Account[] accts = mgr.getAccountsByType("com.google"); 
 		Account acct = accts[0];
 		userNick=acct.name;
+		Log.d(TAG, "1::UserName:"+userNick);
 		AccountManagerFuture<Bundle> accountManagerFuture = mgr.getAuthToken(acct, "ah", null, this, null, null);
 		Bundle authTokenBundle;
 		try {
@@ -309,20 +321,31 @@ public class Preciojusto extends Activity implements OnCommEvent {
 			Hashtable hashParams=new Hashtable();
 			hashParams.put(Comm.PARAM_AUTH_TOKEN, Token);
 			Comm.AUTH_GAE((String) getText(R.string.url_server), hashParams, new OnCommEvent() {
-				
+
 				public void OnComplete(Object response) {
 					Log.d(TAG,"recibida cooki store");
-					cookieStore=(CookieStore) response;
-					Log.d(TAG,cookieStore.toString());
+					Frwk.getInstance().cookieStore=(CookieStore) response;
+					Frwk.getInstance().userId=userNick;
+					Log.d(TAG,Frwk.getInstance().cookieStore.toString());
+					Preciojusto.this.runOnUiThread(new Runnable() {
+						
+						public void run() {
+							Toast.makeText(getApplicationContext(), "Login OK", Toast.LENGTH_LONG).show();	
+						}
+					});
 				}
-				
+
 				public void OnMessage(String string) {}
-				
+
 				public void OnProcess(int percent, String data) {}
-				
+
 				public void OnError(Error error) {
-					Log.e(TAG, "Error getting cookie:"+error.getMessage());
-				}
+					Preciojusto.this.runOnUiThread(new Runnable() {
+						
+						public void run() {
+							Toast.makeText(getApplicationContext(), "Login ERROR try again", Toast.LENGTH_LONG).show();	
+						}
+					});				}
 			});
 			Log.d(TAG, "Token:"+Token);
 		} catch (Exception e) {
@@ -331,26 +354,26 @@ public class Preciojusto extends Activity implements OnCommEvent {
 
 	}
 
-	
+
 	public void OnMessage(String string) {
 		Log.d(TAG,"on msg:"+string);
 	}
 
 
 
-	
+
 	public void OnProcess(int percent, String data) {
 		Log.d(TAG,"OnProcess:"+String.valueOf(percent)+"% dt:"+data);
 
 	}
 
-	
+
 	public void OnError(Error error) {
 		Log.d(TAG,"OnError:"+error.getMessage());
 
 	}
 
-	
+
 	public void OnComplete(Object response) {
 		Log.d(TAG,"on msg:"+response);
 		Gson gson=new Gson();

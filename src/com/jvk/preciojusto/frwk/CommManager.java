@@ -81,14 +81,18 @@ public class CommManager {
 
 	}
 
-	public static void sendPhotoData(Bid bid,CookieStore cookie,OnCommEvent commEvent)
+	public static void sendPhotoData(Bid bid,OnCommEvent mycommEvent)
 	{
-		Hashtable hash=new Hashtable();
-		hash.put(Comm.PARAM_AUTH_COOKIE, cookie);
-		Gson gson=new Gson();
-		hash.put(Comm.PARAM_POST_CONTENT, gson.toJson(bid));
-		Comm.POST("http://"+SERVER+"/uploadBid", hash, commEvent);
-		
+		if (Frwk.getInstance().cookieStore==null)
+		{
+			mycommEvent.OnError(new Error("NO_LOGIN_LOGIN_REQUIRED"));
+		}else{
+			Hashtable hash=new Hashtable();
+			hash.put(Comm.PARAM_AUTH_COOKIE, Frwk.getInstance().cookieStore);
+			Gson gson=new Gson();
+			hash.put(Comm.PARAM_POST_CONTENT, gson.toJson(bid));
+			Comm.POST("http://"+SERVER+"/uploadBid", hash, mycommEvent);
+		}
 
 
 	}
@@ -124,8 +128,7 @@ public class CommManager {
 		try {
 			authTokenBundle = accountManagerFuture.getResult();
 			String token = authTokenBundle.get(AccountManager.KEY_AUTHTOKEN).toString();   
-			ShareObjectManager som=new ShareObjectManager(activity);
-			som.SaveConfig(AUTH_TOKEN, token);
+			Frwk.getInstance().authToken=token;
 			commEvent.OnComplete(token);
 		} catch (Exception e) {
 			commEvent.OnError(new Error("AUTH_NOT_COMPLETE"));
@@ -134,18 +137,18 @@ public class CommManager {
 
 	}
 
-	
-	
-	public static void getBids(String user,CookieStore cookie,String args,OnCommEvent commEvent)
+
+
+	public static void getBids(String user,String args,OnCommEvent commEvent)
 	{
 		Hashtable hash=new Hashtable();
-		if (cookie!=null)
-			hash.put(Comm.PARAM_AUTH_COOKIE, cookie);
+		if (Frwk.getInstance().cookieStore!=null)
+			hash.put(Comm.PARAM_AUTH_COOKIE, Frwk.getInstance().cookieStore);
 		String addedArg="";
 		if (args!=null)
 			addedArg="?"+args;
 		Comm.GET("http://"+SERVER+"/getBids"+addedArg, hash, commEvent);		
-		
+
 
 	}
 

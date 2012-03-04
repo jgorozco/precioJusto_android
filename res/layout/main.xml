@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:orientation="vertical" >
@@ -8,31 +8,43 @@
         android:id="@+id/button1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="sendQuery" android:onClick="StartQuery"/>
+        android:onClick="StartQuery"
+        android:text="sendQuery" />
 
     <Button
         android:id="@+id/button2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Login appengine	" android:onClick="LoginAppEngine"/>
-
-    <TextView
-        android:id="@+id/photoUrl"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="No photo"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
+        android:layout_below="@+id/button1"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="48dp"
+        android:onClick="LoginAppEngine"
+        android:text="Login appengine	" android:padding="30dp"/>
 
     <Button
         android:id="@+id/button3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="sendPhoto" android:onClick="sendPhoto"/>
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:layout_margin="10dp"
+        android:onClick="sendPhoto"
+        android:padding="32dp"
+        android:text="Lista de BIDS temporales" />
 
     <Button
         android:id="@+id/button4"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="getPhoto" android:onClick="getPhoto"/>
+        android:layout_alignLeft="@+id/button3"
+        android:layout_below="@+id/button3"
+        android:layout_margin="10dp"
+        android:layout_marginTop="30dp"
+        android:onClick="getPhoto"
+        android:paddingBottom="30dp"
+        android:paddingLeft="60dp"
+        android:paddingRight="60dp"
+        android:paddingTop="30dp"
+        android:text="tomar una BID" />
 
-</LinearLayout>
+</RelativeLayout>

@@ -5,7 +5,7 @@ public class BidResult {
 	public Bid bidBidder;
 	public float bidPrice;
 	public float points;
-
+	public String id;
 	
 	public BidResult() {
 	

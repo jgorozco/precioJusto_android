@@ -2,6 +2,7 @@ package com.jvk.preciojusto;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Random;
 
@@ -193,6 +194,7 @@ public class BidPicker extends Activity {
 				bidEnviar.urlData=textoUrl.getText().toString();
 				bidEnviar.urlPhoto=photoUrl;
 				bidEnviar.userPropietary=Frwk.getInstance().userId;
+				bidEnviar.timeStamp=Calendar.getInstance().getTimeInMillis();
 				OnCommEvent localCommEvent=new OnCommEvent() {
 					
 					public void OnProcess(int percent, String data) {
